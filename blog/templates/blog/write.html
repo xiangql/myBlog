@@ -1,0 +1,117 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% block title %}创建博客{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/editormd.min.css' %}">
+    <style type="text/css">
+        #write-head{
+            width: 80%;
+            margin: 0px auto;
+            padding: 15px;
+        }
+        #blog-title,#btype{
+           margin-right: 40px;
+        }
+        #save-btn{
+            width: 80px;
+            margin-left: 500px;
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/editormd.min.js' %}"></script>
+     <script>
+        var testEditor;
+        $(function () {
+                testEditor = editormd("test-editormd", {
+                     placeholder:'本编辑器支持Markdown编辑，左边编写，右边预览',  //默认显示的文字，这里就不解释了
+                     width: "80%",
+                     height: 640,
+                     syncScrolling: "single",
+                     path: "{% static 'editormd/lib/' %}",   //你的path路径（原资源文件中lib包在我们项目中所放的位置）
+                     theme: "white",//工具栏主题
+                     previewTheme: "white",//预览主题
+                     editorTheme: "pastel-on-white",//编辑主题
+                     saveHTMLToTextarea: true,
+                     emoji: true,
+                     taskList: true,
+                     tocm: true,         // Using [TOCM]
+                     tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+                     flowChart: true,             // 开启流程图支持，默认关闭
+                     sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+                     // /**上传图片相关配置如下*/
+                     imageUpload : true,
+                     imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                     imageUploadURL : "/smart-api/upload/editormdPic/",//注意你后端的上传图片服务地址
+                     toolbarIcons : function() {  //自定义工具栏，后面有详细介绍
+                        return editormd.toolbarModes['full']; // full, simple, mini
+                  },
+            });
+        });
+
+        $(function () {
+            $('#save-btn').click(function () {
+                sendMsg = {}
+                sendMsg.title = $('#blog-title').val();
+                sendMsg.btype = $('#btype').val()
+                sendMsg.context = $('#my-editormd-markdown-doc').val();
+                if(sendMsg.title.length < 1 || sendMsg.context < 1){
+                    alert("空字段数据无法提交");
+                }else {
+                    $.ajax({
+                        url: "{% url 'blog:write' %}",
+                        type: 'POST',
+                        data: JSON.stringify(sendMsg),
+                        dataType: 'json',
+                        headers:{
+                            "X-CSRFToken": "{{ csrf_token }}",
+                        },
+                        success: function (recvMsg) {
+                            if(recvMsg.state === 'success')
+                            {
+                                location.href = "{% url 'blog:index' %}"
+                            }
+                            else {
+                                alert(recvMsg.reason);
+                            }
+                        }
+                    });
+                }
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block create %}
+    <li role="presentation" class="active"><a href="#">新建博客</a></li>
+{% endblock %}
+
+{% block main %}
+    <div id="write-head">
+       <form class="form-inline">
+          <div class="form-group">
+            <label for="blog-title">标 题:</label>
+            <input type="text" class="form-control" id="blog-title" placeholder="title">
+          </div>
+           <label>类 型:</label>
+           <select class="form-control" id="btype">
+              <option value="技术归档">技术归档</option>
+              <option value="生活日记">生活日记</option>
+              <option value="散文随笔">散文随笔</option>
+              <option value="心情笔录">心情笔录</option>
+              <option value="娱乐推荐">娱乐推荐</option>
+           </select>
+          <button type="button" class="btn btn-default" id="save-btn">提 交
+              <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+          </button>
+        </form>
+    </div>
+    <div id="layout" class="editor">
+        <div id="test-editormd">
+            <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;"></textarea>
+            <textarea id="my-editormd-html-code" name="my-editormd-html-code" style="display:none;"></textarea>
+        </div>
+    </div>
+{% endblock %}

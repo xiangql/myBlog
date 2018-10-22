@@ -1,0 +1,88 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}注册{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        body {
+          padding-top: 40px;
+          padding-bottom: 40px;
+          background-color: #eee;
+        }
+        .form-regist{
+            max-width: 300px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+<script>
+       $(function () {
+            $("#regist-btn").click(function () {
+                sendMsg = {}
+                sendMsg.account = $('#account').val();
+                sendMsg.password = $('#password').val();
+                sendMsg.petname = $('#petname').val();
+                sendMsg.phone = $('#phone').val();
+                sendMsg.email = $('#email').val();
+                if(sendMsg.account.length < 1 || sendMsg.password.length < 1 || sendMsg.petname < 1)
+                {
+                    alert("信息填写不完整");
+                }
+                else {
+                    $.ajax({
+                        url: "{% url 'blog:regist' %}",
+                        dataType: "json",
+                        type: "POST",
+                        data: JSON.stringify(sendMsg),
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                         },
+                        success: function (recvMsg) {
+                            if (recvMsg.state === 'success'){
+                                location.href = "{% url 'blog:index' %}"
+                             }else {
+                                alert(recvMsg.reason);
+                            }
+                        }
+                    });
+                }
+            });
+       });
+
+    </script>
+{% endblock %}
+{% block regist %}
+    <li role="presentation" class="active"><a href="#">注册</a></li>
+{% endblock %}
+{% block main %}
+    <div class="container">
+        <form class="form-regist">
+            {% csrf_token %}
+            <h2 class="form-signin-heading">请填写注册信息</h2>
+            <div class="form-group" >
+                <label for="account">账号:</label>
+                <input type="text" class="form-control" id="account" placeholder="Account">
+            </div>
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="petname">昵称:</label>
+                <input type="text" class="form-control" id="petname" placeholder="pet-name">
+            </div>
+            <div class="form-group">
+                <label for="phone">手机号:</label>
+                <input type="tel" class="form-control" id="phone" placeholder="Phone">
+            </div>
+            <div class="form-group">
+                <label for="email">邮箱:</label>
+                <input type="email" class="form-control" id="email" placeholder="Email">
+            </div>
+            <button class="btn btn-lg btn-primary btn-block" id="regist-btn" type="button">注 册</button>
+        </form>
+    </div>
+{% endblock %}

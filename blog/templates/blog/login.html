@@ -1,0 +1,94 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}登录{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        body {
+          padding-top: 40px;
+          padding-bottom: 40px;
+          background-color: #eee;
+        }
+
+        .form-signin {
+          max-width: 330px;
+          padding: 20px;
+          margin: 0 auto;
+        }
+        .form-signin .form-signin-heading,
+        .form-signin .checkbox {
+          margin-bottom: 20px;
+        }
+        .form-signin .checkbox {
+          font-weight: normal;
+        }
+        .form-signin .form-control {
+          position: relative;
+          height: auto;
+          -webkit-box-sizing: border-box;
+             -moz-box-sizing: border-box;
+                  box-sizing: border-box;
+          padding: 10px;
+          font-size: 16px;
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    <script>
+       $(function () {
+            $("#login-btn").click(function () {
+                sendMsg = {}
+                sendMsg.account = $('#account').val();
+                sendMsg.password = $('#password').val();
+                if(sendMsg.account.length < 1 || sendMsg.password.length < 1)
+                {
+                    alert("账号和密码不能为空");
+                }
+                else {
+                    $.ajax({
+                        url: "{% url 'blog:login' %}",
+                        dataType: "json",
+                        type: "POST",
+                        data: JSON.stringify(sendMsg),
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                         },
+                        success: function (recvMsg) {
+                            if (recvMsg.state === 'success'){
+                                location.href = "{% url 'blog:index' %}"
+                             }else {
+                                alert(recvMsg.reason);
+                            }
+                        }
+                    });
+                }
+            });
+       });
+    </script>
+{% endblock %}
+{% block login %}
+    <li role="presentation" class="active"><a href="{% url 'blog:login' %}">登录</a></li>
+{% endblock %}
+{% block main %}
+     <div class="container">
+      <form class="form-signin">
+          {% csrf_token %}
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <div class="form-group">
+                <label for="account">账号:</label>
+                <input type="text" id="account" class="form-control" placeholder="Account">
+            </div>
+           <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" id="password" class="form-control" placeholder="Password">
+           </div>
+          <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="remember-me"> Remember me
+                </label>
+          </div>
+        <button class="btn btn-lg btn-primary btn-block" id="login-btn" type="button">Sign in</button>
+      </form>
+    </div>
+{% endblock %}

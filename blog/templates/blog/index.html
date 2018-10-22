@@ -1,0 +1,88 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}首页{% endblock %}
+
+{% block index %}
+    <li role="presentation" class="active"><a href="{% url 'blog:index' %}">首页</a></li>
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        #container{
+            width: 80%;
+            margin:0px auto;
+            display: flex;
+            flex-direction: row;
+        }
+        #container-left{
+            width: 600px;
+            margin-right: 120px;
+        }
+        #container-right{
+            flex: 1;
+            margin-top: 20px;
+            margin-right: 60px;
+        }
+        #panle-top {
+            margin-top: 20px;
+        }
+        .panel-footer span{
+            margin-left: 400px;
+        }
+    </style>
+{% endblock %}
+{% block js %}
+    <script>
+        $(function () {
+            $('.type-blog a').number
+            $('.type-blog a').hide();
+            $('.type-blog li').click(function (event) {
+
+                $(event.target).children('span:first').toggleClass("glyphicon-triangle-bottom");
+                $(event.target).siblings("a").toggle();
+            });
+        })
+    </script>
+{% endblock %}
+
+
+{% block main %}
+    <div id="container">
+        <div id="container-left">
+            {% for blog in bloglist %}
+            <div class="panel panel-default" id="panle-top">
+              <div class="panel-heading">
+                  <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                   <a href="/blog/read/?id={{ blog.0 }}">{{ blog.1 }}</a>
+              </div>
+                <div class="panel-body">
+                    {{ blog.4 }}
+                </div>
+                 <div class="panel-footer">{{ blog.3 }}
+                     <a href="/blog/read/?id={{ blog.0 }}" alt="链接" title="更多"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></a>
+                 </div>
+             </div>
+            {% endfor %}
+        </div>
+        <div id="container-right">
+            <div class="list-group">
+                <li class="list-group-item list-group-item-danger">
+                    <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+                    文档分类</li>
+                {% for type, num in nums.items %}
+                    <div class="type-blog">
+                        <li class="list-group-item list-group-item-info">{{ type }}
+                            <span class="glyphicon glyphicon-triangle-right"></span>
+                            <span class="badge">{{ num }}</span>
+                        </li>
+                        {% for blog in bloglist %}
+                            {% if blog.2 == type %}
+                                <a href="/blog/read/?id={{ blog.0 }}" class="list-group-item">{{ blog.1 }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

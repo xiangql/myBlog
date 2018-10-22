@@ -1,0 +1,134 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% block title %}{{ blog.title }}{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        #container{
+            width: 80%;
+            margin:0px auto;
+            display: flex;
+            flex-direction: row;
+        }
+        #container-left{
+            width: 600px;
+            margin-right: 120px;
+        }
+        #container-right{
+            flex: 1;
+            margin-top: 20px;
+            margin-right: 60px;
+        }
+        #panle-top {
+            margin-top: 20px;
+        }
+        .panel-footer a{
+            margin-left: 400px;
+
+        }
+    </style>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/editormd.min.js' %}"></script>
+    <script src="{% static 'editormd/lib/marked.min.js' %}"></script>
+    <script src="{% static 'editormd/lib/prettify.min.js' %}"></script>
+    <script src="{% static 'editormd/lib/raphael.min.js' %}"></script>
+    <script src="{% static 'editormd/lib/underscore.min.js' %}"></script>
+    <script src="{% static 'editormd/lib/sequence-diagram.min.js' %}"></script>
+    <script src="{% static 'editormd/lib/flowchart.min.js' %}"></script>
+    <script src="{% static 'editormd/lib/jquery.flowchart.min.js' %}"></script>
+    <script>
+        var testEditor;
+        $(function () {
+            var testEditor;
+            $(function() {
+                testEditor = editormd.markdownToHTML("test-editormd", {
+                {#markdown:$scope.apidetails.content,#}
+                htmlDecode : "style,script,iframe",
+                path: "{% static 'editormd/lib/' %}", //你的path路径（原资源文件中lib包在我们项目中所放的位置）
+                // you can filter tags decode
+                emoji : true,
+                taskList : true,
+                tex : true, // 默认不解析
+                flowChart : true, // 默认不解析
+                sequenceDiagram : true, // 默认不解析
+                });
+            });
+        });
+
+        $(function () {
+            $('.type-blog a').hide();
+            $('.type-blog li').click(function (event) {
+                $(event.target).children('span:first').toggleClass("glyphicon-triangle-bottom");
+                $(event.target).siblings("a").toggle();
+            });
+
+            $("#per-collect").click(function (event) {
+                var sendMsg = {};
+                sendMsg.bid = $("#per-collect").attr("value");
+                 $.ajax({
+                    url: "{% url 'blog:collect' %}",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(sendMsg),
+                    headers:{
+                         "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    success:function (recvMsg) {
+                        if(recvMsg.state === "success"){
+                            alert("收藏成功，请前往个人中心查看!!!");
+                        }
+                        else {
+                            alert(recvMsg.reason);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+
+{% block main %}
+    <div id="container">
+        <div id="container-left">
+            <div class="panel panel-default" id="panle-top">
+              <div class="panel-heading">
+                  {{ blog.title }}
+              </div>
+                <div class="panel-body">
+                    <div id="layout"  class="editor">
+                        <div id="test-editormd" >
+                            <textarea>{{ blog.context }}</textarea>
+                        </div>
+                     </div>
+                </div>
+                 <div class="panel-footer">作者:{{ author }}
+                    <a  title="收藏" value="{{ blog.bid }}" id="per-collect">
+                        <span class="glyphicon glyphicon-heart" aria-hidden="true" ></span>
+                    </a>
+                 </div>
+             </div>
+        </div>
+        <div id="container-right">
+            <div class="list-group">
+                <li class="list-group-item list-group-item-danger">
+                    <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+                    文档分类</li>
+                {% for type, num in nums.items %}
+                    <div class="type-blog">
+                        <li class="list-group-item list-group-item-info">{{ type }}
+                            <span class="glyphicon glyphicon-triangle-right"></span>
+                             <span class="badge">{{ num }}</span>
+                        </li>
+                        {% for blog in bloglist %}
+                            {% if blog.2 == type %}
+                                <a href="/blog/read/?id={{ blog.0 }}" class="list-group-item">{{ blog.1 }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

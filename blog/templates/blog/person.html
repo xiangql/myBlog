@@ -1,0 +1,379 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}个人博客中心{% endblock %}
+
+{% block person %}<li role="presentation"><a href="{% url 'blog:person' %}" target="_self" class="active">个人中心</a></li>{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        #person-main{
+            display: flex;
+            flex-direction: row;
+            width: 80%;
+            margin: 0px auto;
+        }
+        .main-left{
+            width: 300px;
+            margin: 20px;
+        }
+        .main-right{
+            flex: 1;
+            margin-top: 20px;
+        }
+        .form-correct,.form-correct-pwd{
+            max-width: 300px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+        #per-cor-blog-top{
+            display: flex;
+            flex-direction: row;
+            margin: 0px;
+        }
+        .correct-width{
+            width: 200px;
+            margin: 0px auto;
+        }
+        .correct-width-text{
+            width: 500px;
+            margin: 0px auto;
+        }
+        #per-cor-cancel,#per-cor-confirm,#per-cor-confirm-pwd,#per-cor-confirm-blog{
+            width: 120px;
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function () {
+            //刷新信息
+            $("#person-refresh").click(function () {
+                location.href = "{% url 'blog:person' %}";
+            });
+            //信息修改确认
+            $("#per-cor-confirm").click(function () {
+                var sendMsg = {}
+                sendMsg.itype = "info";
+               // sendMsg.uid = $("#person-account").attr('value'); session中可以得到
+                sendMsg.petname = $("#myModal .form-correct #petname").val();
+                sendMsg.phone = $("#myModal .form-correct #phone").val();
+                sendMsg.email = $("#myModal .form-correct #email").val();
+                $.ajax({
+                    url:"{% url 'blog:person' %}",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(sendMsg),
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    success: function (recvMsg) {
+                            alert(recvMsg.reason)
+                            $('#myModal').modal('hide');
+                    }
+                });
+            });
+            //密码重置确认
+            $("#per-cor-confirm-pwd").click(function () {
+                var sendMsg = {}
+                sendMsg.itype = "pwd";
+                sendMsg.oldpassword = $("#pwdModal .form-correct-pwd #oldpassword").val();
+                sendMsg.newpassword = $("#pwdModal .form-correct-pwd #newpassword").val();
+                var pwd = $("#pwdModal .form-correct-pwd #newpassword1").val();
+                if(pwd == sendMsg.newpassword){
+                    $.ajax({
+                        url:"{% url 'blog:person' %}",
+                        type: "POST",
+                        dataType: "json",
+                        data: JSON.stringify(sendMsg),
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                        },
+                        success: function (recvMsg) {
+                            if(recvMsg.state == "success"){
+                                alert(recvMsg.reason);
+                            }else {
+                               alert(recvMsg.reason);
+                            }
+                        }
+                    });
+                }else {
+                    alert("请确保重置密码准确")
+                }
+                $('#pwdModal').modal('hide');
+            });
+            var bid = 0;
+            $('.correct-blog-btn').click(function (event) {
+                var sendMsg = {};
+                sendMsg.itype = "rblog"
+                sendMsg.bid = $(event.target).parent('a').parent('td').siblings('td:eq(0)').text();
+                bid = sendMsg.bid;
+                title = $(event.target).parent('a').parent('td').siblings('td:eq(1)').text();
+                $.ajax({
+                    url:"{% url 'blog:person' %}",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(sendMsg),
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    success: function (recvMsg) {
+                        if(recvMsg.state == "success"){
+                           $('#per-cor-blog-top #blog-title').val(title);
+                           $('#blog-text').val(recvMsg.reason);
+                        }
+                    }
+                });
+            });
+            $('#per-cor-confirm-blog').click(function () {
+                var sendMsg = {}
+                sendMsg.itype = "cblog";
+                sendMsg.bid = bid;
+                sendMsg.title = $('#per-cor-blog-top #blog-title').val();
+                sendMsg.btype = $('#per-cor-blog-top #btype').val();
+                sendMsg.context = $('#blog-text').val();
+                 $.ajax({
+                    url:"{% url 'blog:person' %}",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(sendMsg),
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    success: function (recvMsg) {
+                        if(recvMsg.state == "success"){
+                          alert(recvMsg.reason);
+                          $('#editModal').modal('hide');
+                          location.href = "{% url 'blog:person' %}";
+                        }
+                    }
+                });
+            });
+
+            $('.delete-blog-btn').click(function (event) {
+                 var sendMsg = {};
+                sendMsg.itype = "delblog"
+                sendMsg.bid = $(event.target).parent('a').parent('td').siblings('td:eq(0)').text();
+                $.ajax({
+                    url:"{% url 'blog:person' %}",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(sendMsg),
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    success: function (recvMsg) {
+                        if(recvMsg.state == "success"){
+                          alert(recvMsg.reason);
+                          location.href = "{% url 'blog:person' %}";
+                        }
+                    }
+                });
+            });
+
+             $('.delete-cblog-btn').click(function (event) {
+                 var sendMsg = {};
+                 sendMsg.itype = "delcblog";
+                 sendMsg.bid = $(event.target).parent('a').parent('td').siblings('td:eq(0)').children('a').text();
+                $.ajax({
+                    url:"{% url 'blog:person' %}",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(sendMsg),
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    success: function (recvMsg) {
+                        if(recvMsg.state == "success"){
+                          alert(recvMsg.reason);
+                          location.href = "{% url 'blog:person' %}";
+                        }
+                    }
+                });
+             });
+
+        });
+    </script>
+
+{% endblock %}
+
+{% block main %}
+    <div id="person-main">
+        <div class="main-left">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info">个人资料
+                    <span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                </li>
+                <li class="list-group-item" id="person-account" value="{{ user.account }}">账号: {{ user.account }}</li>
+                <li class="list-group-item">昵称: {{ user.petname }}</li>
+                <li class="list-group-item">手机号: {{ user.phone }}</li>
+                <li class="list-group-item">邮箱: {{ user.email }} </li>
+                <a class="list-group-item" href="#/pwblogs">原创博文:<span class="badge"> {{ bnum }} </span></a>
+                <a class="list-group-item" href="#/pcblogs">博文收藏:<span class="badge"> {{ cnum }} </span></a>
+                <div class="btn-group btn-group-justified" role="group">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">修改</button>
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">用户修改信息</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                       <form class="form-correct">
+                                           {% csrf_token %}
+                                           <div class="form-group">
+                                                <label for="petname">昵称:</label>
+                                                <input type="text" class="form-control" id="petname" placeholder="pet-name">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="phone">手机号:</label>
+                                                <input type="tel" class="form-control" id="phone" placeholder="Phone">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email">邮箱:</label>
+                                                <input type="email" class="form-control" id="email" placeholder="Email">
+                                            </div>
+                                       </form>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" id="per-cor-cancel" data-dismiss="modal">Close</button>
+                                      <button type="button" class="btn btn-primary" id="per-cor-confirm">Save Submit</button>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pwdModal">更换密码</button>
+                        <div class="modal fade" id="pwdModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">密码重置</h4>
+                              </div>
+                              <div class="modal-body">
+                                    <form class="form-correct-pwd">
+                                       {% csrf_token %}
+                                       <div class="form-group">
+                                            <label for="oldpassword">旧密码:</label>
+                                            <input type="text" class="form-control" id="oldpassword" placeholder="Old Password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="newpassword">重置密码:</label>
+                                            <input type="password" class="form-control" id="newpassword" placeholder="New Password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="newpassword1">确认密码:</label>
+                                            <input type="password" class="form-control" id="newpassword1" placeholder="再次确认密码">
+                                        </div>
+                                   </form>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" id="per-cor-cancel" data-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary" id="per-cor-confirm-pwd">Save Submit</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default" id="person-refresh">刷新</button>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div class="table-responsive main-right">
+            <div class="list-group">
+                <a href="#" class="list-group-item active" name="pwblogs">
+                   个人原创博客
+                </a>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                  <td class="info">编号</td>
+                  <td class="active">标题</td>
+                  <td class="success">类型</td>
+                  <td class="warning">内容</td>
+                  <td class="danger">编辑</td>
+                  <td class="info">删除</td>
+                </tr>
+                {% for blog in bloglist %}
+                <tr>
+                      <td>{{ blog.0 }}</td>
+                      <td>{{ blog.1 }}</td>
+                      <td>{{ blog.2 }}</td>
+                      <td>{{ blog.4 }}</td>
+                      <td><a type="button" data-toggle="modal" data-target="#editModal" class="correct-blog-btn"><span class="glyphicon glyphicon-edit" aria-hidden="true" title="编辑"></span></a></td>
+                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">博客修改</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                    <form class="per-cor-blog">
+                                        <div id="per-cor-blog-top" >
+                                            <div class="form-group correct-width">
+                                                <label for="blog-title">标 题:</label>
+                                                <input type="text" class="form-control" id="blog-title" placeholder="title">
+                                            </div>
+                                            <div class="form-group correct-width">
+                                                <label>类 型:</label>
+                                                <select class="form-control" id="btype">
+                                                      <option value="技术归档">技术归档</option>
+                                                      <option value="生活日记">生活日记</option>
+                                                      <option value="散文随笔">散文随笔</option>
+                                                      <option value="心情笔录">心情笔录</option>
+                                                      <option value="娱乐推荐">娱乐推荐</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group correct-width-text">
+                                                <label>内容:</label>
+                                                <textarea class="form-control" rows="6" id="blog-text"></textarea>
+                                        </div>
+                                    </form>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" id="per-cor-cancel" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" id="per-cor-confirm-blog">Save changes</button>
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
+                      <td ><a class="delete-blog-btn"><span class="glyphicon glyphicon-trash" aria-hidden="true" title="删除"></span></a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            <div class="list-group">
+                <a href="#" class="list-group-item active" name="pblogs">
+                   个人珍藏博客
+                </a>
+            </div>
+             <table class="table table-bordered">
+                <tr>
+                  <td class="info">编号</td>
+                  <td class="active">标题</td>
+                  <td class="success">类型</td>
+                  <td class="warning">时间</td>
+                  <td class="info">删除</td>
+                </tr>
+                {% for cblog in cblogs %}
+                <tr>
+                     <td ><a href="/blog/read/?id={{ cblog.bid }}" class="active">{{ cblog.bid }}</a></td>
+                      <td>{{ cblog.title }}</td>
+                      <td>{{ cblog.btype }}</td>
+                      <td>{{ cblog.cDate }}</td>
+                      <td><a class="delete-cblog-btn"><span class="glyphicon glyphicon-trash" aria-hidden="true" title="删除"></span></a></td>
+                </tr>
+                {% endfor %}
+             </table>
+        </div>
+    </div>
+{% endblock %}
+
+

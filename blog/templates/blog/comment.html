@@ -1,0 +1,102 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}博客论坛{% endblock %}
+ {% block comment %}<li role="presentation" class="active"><a href="{% url 'blog:comment' %}"  target="_self">博客论坛</a></li>{% endblock %}
+{% block css %}
+<style type="text/css">
+    .container{
+        width: 80%;
+        margin: 0px auto;
+    }
+    .header-everyday{
+        text-align: right;
+    }
+    .everyday{
+        margin:0px 15px;
+    }
+    .text-upload{
+        text-align: right;
+        margin: 5px;
+    }
+    .other-comment{
+        margin-top: 5px;
+        width: 70%;
+        float: left;
+    }
+    .self-comment{
+        width: 70%;
+        float: right;
+        margin-top: 5px;
+    }
+    .list-group-item dd{
+        float: right;
+    }
+
+</style>
+{% endblock %}
+
+{% block js %}
+<script>
+    $(function () {
+        $('#comment-text-submit').click(function () {
+            var sendMsg = {}
+            sendMsg.comment = $('#comment-text').val();
+            $.ajax({
+                url: "{% url 'blog:comment' %}",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(sendMsg),
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                success: function (recvMsg) {
+                    if(recvMsg.state == "success"){
+                        alert(recvMsg.reason);
+                        location.href = "{% url 'blog:comment' %}";
+                    }
+                }
+            })
+
+        });
+    })
+</script>
+
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="page-header header-everyday">
+            <h3 class="everyday">{{ talk }}<small class="everyday">——<span class="glyphicon glyphicon-grain" aria-hidden="true">每日一语</span></small></h3>
+        </div>
+        <div>
+            <label>评论:</label>
+             <textarea class="form-control" rows="3" id="comment-text"></textarea>
+             <div class="text-upload">
+                 请注意你在网络上的一言一行，禁止传播不良言论，以防给他人带来困扰。
+                 <a><span class="glyphicon glyphicon-comment" aria-hidden="true" title="发表评论" id="comment-text-submit"></span></a>
+             </div>
+        </div>
+        <u>
+            {% for comment in comments %}
+                {% if comment.fUser.account == request.session.id %}
+                    <ul class="list-group self-comment">
+                        <li class="list-group-item">{{ comment.content }}
+                            <dd><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ comment.fUser.petname }}</dd>
+                        </li>
+                    </ul>
+                {% else %}
+                    <ul class="list-group other-comment">
+                        <li class="list-group-item">{{ comment.content }}
+                        <dd><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ comment.fUser.petname }}</dd>
+                        </li>
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}
+
+
+
+
