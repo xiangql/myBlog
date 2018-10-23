@@ -1,16 +1,283 @@
-{% extends 'blog/base.html' %}
+{% load staticfiles %}
 
-{% block title %}关于{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>个人博客-简历</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">  <!-- Google web font "Open Sans" -->
+    <link rel="stylesheet" href="{% static 'font-awesome-4.5.0/css/font-awesome.min.css' %}">                <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'slick/slick.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'slick/slick-theme.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/tooplate-style.css' %}"><!-- tooplate style -->
 
-{% block about %}<li role="presentation" class="active"><a href="{% url 'blog:about' %}" target="_self">关于</a></li>{% endblock %}
+    <!-- Magnific Popup core CSS file -->
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+       <!-- load JS files -->
+          <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>        <!-- jQuery (https://jquery.com/download/) -->
+          <script src="{% static 'js/parallax.min.js' %}"></script>
 
+          <script type="text/javascript" src="{% static 'slick/slick.min.js' %}"></script>
+          <!-- Slick Carousel -->
 
-{% block css %}
-{% endblock %}
-{% block js %}
-{% endblock %}
+          <!-- Magnific Popup core JS file -->
+          <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+             <!-- bootstrap jquery cdn -->
+          <script>
+            function setCarousel() {
+              var slider = $('.tm-img-slider');
+              if (slider.hasClass('slick-initialized')) {
+                slider.slick('destroy');
+              }
+              if($(window).width() > 991){
+                  // Slick carousel
+                  slider.slick({
+                    dots: true,
+                    infinite: true,
+                    slidesToShow: 4,
+                    slidesToScroll: 1,
+                  });
+                }
+                else {
+                 slider.slick({
+                  dots: true,
+                  infinite: true,
+                  slidesToShow: 2,
+                  slidesToScroll: 1
+                });
+               }
+             }
+             $(document).ready(function(){
+              setCarousel();
+              $('.tm-img-slider').magnificPopup({
+                delegate: 'a', // child items selector, by clicking on it popup will open
+                type: 'image'
+                // other options
+              });
+              $(window).resize(function() {
+                setCarousel();
+              });
+            });
+          </script>
+        <style type="text/css">
+            .text-introduction{
+                background:white;
+                opacity: 0.8;padding: 15px;
+                border-radius: 5px;
+                color: black;
+            }
+            #weixin{
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+            }
+            #weixin-code{
+                display: none;
+                width: 200px;
+                height: 200px;
+                position: absolute;
+                margin-top:-200px;
+                margin-left:80%;
+                z-index: 10;
+            }
+        </style>
+  </head>
+<body>
+ <div class="parallax-window" data-parallax="scroll" data-image-src="{% static 'imgs/bg-img-02.jpg' %}">
+          <section class="container tm-page-1-content">
+            <div class="row">
+              <div class="col-md-6 ml-auto tm-text-white">
+                <header><h1>Welcome</h1></header>
+                  <div class="text-introduction">
+                       <b>
+                        首先感谢您的查阅，这是我的一份个人简历。<br>
+                        如若您对本人所掌握的技术感兴趣，或者可以推荐一份合适的工作，欢迎您的联系。
+                        </b>
+                  </div>
+                  <a href="{% url 'blog:index' %}" class="btn btn-danger">返回首页</a>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div id="tm-section-2" class="parallax-window" data-parallax="scroll" data-image-src="{% static 'imgs/bg-img-01.jpg' %}">
+          <section class="container tm-page-1-content tm-page-2">
+            <div class="row">
+              <div class="col-md-6 ml-auto tm-text-white">
+                  <header><h2 ><small>基本信息</small></h2></header>
+                <div class="text-introduction">
+                    <b> 姓名：项琼楼<br>
+                        <span class="glyphicon glyphicon-education" aria-hidden="true"></span>学历：本科(黄山学院)<br>
+                        工作经验：无<br>
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>现居地：上海浦东新区<br>
+                        <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>状态：正在找工作<br>
+                        Email：18815593278@163.com<br>
+                        <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>籍贯：安徽省安庆市宿松县<br>
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>其他：男|22岁|软件工程
+                    </b>
+                </div>
+              </div>
+              <div class="col-md-6 ml-auto tm-text-white">
+                <header><h2><small>自我介绍</small></h2></header>
+                <div class="text-introduction">
+                    <b>自我评价：对待事情比较认真，心态良好，遇事冷静，为人和善。
+                        自学能力良好，会用所会的知识去实现一些小程序，
+                        知识面了解较为广泛。<br>
+                        未来期望方向：python开发/数据挖掘<br>
+                        人生格言：有志者事竟成。<br>
+                        Where there is a will, there is a way.
+                    </b>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div id="tm-section-3" class="parallax-window" data-parallax="scroll" data-image-src="{% static 'imgs/bg-img-03.jpg' %}">
+          <section class="container tm-page-1-content">
+            <div class="row1">
+              <div class="col-xl-6 col-md-8 ml-auto">
+                <article class="tm-bg-white-transparent-page3">
+                  <header><h5 class="tm-bg-white">专业技能</h5></header>
+                  <p class="tm-bg-white2">
+                        主要掌握的后台编程语言有C/C++，Python，有了解过Java<br>
+                        Web前端有掌握Html+Css+Js,会使用Bootstrap和Jquery<br>
+                        常用数据库为mysql,了解过sql server,sqlite3数据库<br>
+                        熟悉lunix,windows系统环境开发</p>
+                    <a href="#tm-section-4" class="btn btn-danger tm-btn-right">项目经验</a>
+                </article>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div id="tm-section-4" class="parallax-window" data-parallax="scroll" data-image-src="{% static 'imgs/bg-img-04.jpg' %}">
 
+          <div class="row tm-page-4-content">
+            <article  class="col-xs-6 col-md-4 tm-bg-white-transparent">
+              <header><h3>基于django的个人博客</h3></header>
+              <p>
+                  采用Python中的django框架，利用pycharm完成。项目前端使用了Bootstrap和JQuery等前端框架，
+                  前端采用了表单加ajax发送json数据，博客编写采用了markdown的格式，后台采用的mysql数据库和重定向
+                  。实现的功能有用户登录注册，对个人博客的增删(分数据删除和隐性删除)改查，对浏览的博客可以实现收藏，
+                  可以对平台博客进行评论。首页显示根据博文标签来显示博文的基本信息。
+                  数据库表的设计为用户表，收藏表，博客基本信息表，博文表，评论表。
+              </p>
+            </article>
+            <article class="col-xs-6 col-md-4 tm-bg-white-transparent">
+              <header><h3>基于Python爬虫的天气预报</h3></header>
+              <p>功能实现了PC端根据IP自动获取当前城市，再获取城市的天气情况。
+                  利用BeautifulSoup和上网IP抓取地理位置，根据地理位置和找到API接口获取json数据，
+                  利用django框架将数据传递到前端，以特定的样式显示。接受前端选择的城市传递到后台，
+                  爬取该城市的天气信息，返回到前端显示。</p>
+            </article>
+            <article class="col-xs-6 col-md-4 tm-bg-white-transparent">
+              <header><h3>基于Socket的简易版QQ聊天系统</h3></header>
+              <p>服务器端采用多线程来处理客户端请求和回复响应，客户端采用双线程来发送请求和接受响应回复。
+                  客户端的基本功能要求为注册，登录，加好友，建群，加群，群聊，好友聊天，删除好友，退群...
+                  服务器端不断等待客户端连接，每个客户通过单个线程去处理客户请求，对于发送的请求数据报文自定义格式，
+                  服务器端根据报文响应不同请求和作出相应回复，要求用户能够离线接受聊天消息，在用户离线时将用户接受的消息缓存与服务器端，
+                  当用户登录上线时显示。在用户离线时要实时回收该用户占用的内存资源。</p>
+            </article>
+          </div>
+        </div>
+        <div class="parallax-window" data-parallax="scroll" data-image-src="{% static 'imgs/bg-img-05.jpg' %}">
+          <div class="container">
+            <div class="row">
+              <div class="tm-img-container">
+                <div class="tm-img-slider">
 
-{% block main %}
+                    <a class="image-link" href="{% static 'imgs/gallery-img-01.jpg' %}"><img src="{% static 'imgs/gallery-img-01-tn.jpg' %}" alt="Image" class="tm-slider-img"></a>
+                    <a class="image-link" href="{% static 'imgs/gallery-img-02.jpg' %}"><img src="{% static 'imgs/gallery-img-02-tn.jpg' %}" alt="Image" class="tm-slider-img"></a>
+                    <a class="image-link" href="{% static 'imgs/gallery-img-03.jpg' %}"><img src="{% static 'imgs/gallery-img-03-tn.jpg' %}" alt="Image" class="tm-slider-img"></a>
+                    <a class="image-link" href="{% static 'imgs/gallery-img-04.jpg' %}"><img src="{% static 'imgs/gallery-img-04-tn.jpg' %}" alt="Image" class="tm-slider-img"></a>
+                    <a class="image-link" href="{% static 'imgs/gallery-img-05.jpg' %}"><img src="{% static 'imgs/gallery-img-05-tn.jpg' %}" alt="Image" class="tm-slider-img"></a>
+                    <a class="image-link" href="{% static 'imgs/gallery-img-06.jpg' %}"><img src="{% static 'imgs/gallery-img-06-tn.jpg' %}" alt="Image" class="tm-slider-img"></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tlinks">Collect from <a href="http://www.cssmoban.com/" >网页模板</a></div>
 
-{% endblock %}
+        <div class="parallax-window tm-position-relative tm-form-section" data-parallax="scroll" data-image-src="{% static 'imgs/bg-img-06.jpg' %}">
+          <div class="container ">
+            <div class="row1 ">
+              <div class="col-xs-12">
+                <header><h5>Contact Us</h5></header>
+              </div>
+            </div>
+            <div class="row tm-page-5-content">
+              <div class="col-lg-4 col-md-6 col-xs-12">
+                <div class="contact_message">
+                  <form action="#contact" method="post" class="contact-form">
+                    <div class="form-group">
+                      <input type="text" id="contact_name" name="contact_name" class="form-control" placeholder="Name"/>
+                    </div>
+                    <div class="form-group">
+                      <input type="email" id="contact_email" name="contact_email" class="form-control" placeholder="Email"/>
+                    </div>
+                    <div class="form-group">
+                      <textarea id="contact_message" name="contact_message" class="form-control" rows="9" placeholder="Message"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-danger tm-btn-submit" id="link-me">给我致信</button>
+                  </form>
+                </div>
+              </div>
+                <script>
+                        $(document).ready(function () {
+                            $('#link-me').click(function () {
+                                var sendMsg = {}
+                                sendMsg.name = $('#contact_name').val();
+                                sendMsg.email = $('#contact_email').val();
+                                sendMsg.msg = $('#contact_message').val();
+                                $.ajax({
+                                   url: "{% url 'blog:about' %}",
+                                   type: "POST",
+                                   dataType: "json",
+                                   data: JSON.stringify(sendMsg),
+                                    headers:{
+                                       "X-CSRFToken": "{{ csrf_token }}",
+                                    },
+                                    success:function (recvMsg) {
+                                        alert(recvMsg.reason);
+                                        location.href = "{% url 'blog:about' %}";
+                                    }
+                                });
+                            });
+                        });
+                </script>
+              <div class="col-lg-8 col-md-6 col-xs-12">
+                <div class="tm-address-box">
+                  <p>The greatest test of courage on earth is to bear defeat without losing heart.</p>
+                  <br>
+                  <address>
+                    <b>Our Address</b><br>
+                    <br>
+                      地址：上海浦东新区康桥镇<br>
+                      最近地铁站：秀沿路<br>
+                      Email：18815593278@163.com<br>
+                  </address>
+                </div>
+              </div>
+            </div>
+            <div class="footer">
+              <p>
+                本网页框架采用自<a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a>
+                如有侵权请联系本人，本人将及时改正。欢迎各位给予建议。
+                  <img src="{% static 'imgs/weixin.png' %}" id="weixin" onmouseenter="showcode()" onmouseleave="hidecode()">
+              </p>
+              </div>
+            </div>
+          </div>
+        <img src="{% static 'imgs/weixincode.png' %}" id="weixin-code">
+        <script>
+            function showcode() {
+                document.getElementById('weixin-code').style.display = "block";
+            }
+            function hidecode() {
+                document.getElementById('weixin-code').style.display = "none";
+            }
+        </script>
+    </body>
+</html>

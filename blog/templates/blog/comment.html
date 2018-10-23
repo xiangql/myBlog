@@ -53,6 +53,9 @@
                     if(recvMsg.state == "success"){
                         alert(recvMsg.reason);
                         location.href = "{% url 'blog:comment' %}";
+                    }else {
+                        alert(recvMsg.reason);
+                        location.href = "{% url 'blog:login' %}";
                     }
                 }
             })

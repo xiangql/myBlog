@@ -104,7 +104,8 @@ def readBlog(request):
 def collect(request):
     uid = request.session.get('id', None)
     if uid == None:
-        return redirect(reverse('blog:login'))
+        sendMsg = {'state': 'unlogin', 'reason': "请先登录博客再添加收藏！！！"}
+        return JsonResponse(sendMsg)
     if request.method == "POST":
         sendMsg = {}
         recvMsg = request.body.decode()
@@ -190,10 +191,11 @@ def person(request):
 def comment(request):
     comments = Comment.objects.filter(isDelete=False).order_by('-cid')#倒序
     talk = "人生苦短，我学Python !"
+    uid = request.session.get('id', None)
     if request.method == "POST":
-        uid = request.session.get('id', None)
         if uid == None:
-            return redirect(reverse('blog:login'))
+            sendMsg = {'state':"failed", 'reason':"发表评论前，请先登录！！！"}
+            return JsonResponse(sendMsg)
         recvMsg = request.body.decode()
         data = json.loads(recvMsg)
         user = User.objects.get(account=uid)
@@ -204,6 +206,13 @@ def comment(request):
     return render(request, 'blog/comment.html', {'comments': comments, "talk": talk})
 
 def about(request):
+    if request.method == "POST":
+        recvMsg = request.body.decode()
+        data = json.loads(recvMsg)
+        info = RecvMsg(name=data['name'], email=data['email'], msg=data['msg'])
+        info.save()
+        sendMsg = {'state': "success", 'reason': "你的发送信息已被接收！！！"}
+        return JsonResponse(sendMsg)
     return render(request, 'blog/about.html')
 
 

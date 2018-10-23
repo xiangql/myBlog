@@ -78,6 +78,11 @@
                         if(recvMsg.state === "success"){
                             alert("收藏成功，请前往个人中心查看!!!");
                         }
+                        else if(recvMsg.state === "unlogin")
+                        {
+                            alert(recvMsg.reason);
+                            location.href = "{% url 'blog:login' %}";
+                        }
                         else {
                             alert(recvMsg.reason);
                         }

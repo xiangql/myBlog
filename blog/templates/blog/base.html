@@ -4,9 +4,10 @@
     {% load staticfiles %}
     <meta charset="UTF-8">
     <title>{% block title %}模板页面{% endblock %}</title>
-    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
-    <meta name="author" content="Vincent Garreau">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+{#    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">#}
+{#    <meta name="author" content="Vincent Garreau">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">#}
+
     <link rel="stylesheet" media="screen" href="{% static 'css/style.css' %}">
 
     <style type="text/css">
@@ -108,15 +109,10 @@ canvas{
 }
 
 
-
 .header{
     width: 80%;
     margin: 0px auto;
 }
-
-
-
-        }
     </style>
     <!-- bootstrap jquery cdn -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

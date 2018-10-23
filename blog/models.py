@@ -42,6 +42,15 @@ class Comment(models.Model):
         return self.cid
 
 
+class RecvMsg(models.Model):
+    name = models.CharField(max_length=20)
+    email = models.EmailField()
+    msg = models.TextField()
+    cdate = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
 
 
 
